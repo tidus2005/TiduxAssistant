@@ -41,7 +41,7 @@ struct MobilityCaffeineControls: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Toggle(isOn: Binding(get: { controller.isActive }, set: controller.setEnabled)) {
+            Toggle(isOn: Binding(get: { controller.isActive }, set: { controller.setEnabled($0) })) {
                 Label("咖啡因 · 保持唤醒", systemImage: "cup.and.saucer.fill")
                     .font(.headline)
             }
@@ -49,7 +49,7 @@ struct MobilityCaffeineControls: View {
             .accessibilityIdentifier("caffeine-toggle")
             .disabled(controller.isManagedByMobileOffice)
 
-            Picker("开启时长", selection: Binding(get: { controller.mode }, set: controller.setMode)) {
+            Picker("开启时长", selection: Binding(get: { controller.mode }, set: { controller.setMode($0) })) {
                 Text("一直开启").tag(MacCaffeineDurationMode.indefinite)
                 Text("定时关闭").tag(MacCaffeineDurationMode.timed)
             }
@@ -58,7 +58,7 @@ struct MobilityCaffeineControls: View {
 
             if controller.mode == .timed {
                 Picker("时长", selection: Binding(
-                    get: { controller.durationMinutes }, set: controller.setDurationMinutes
+                    get: { controller.durationMinutes }, set: { controller.setDurationMinutes($0) }
                 )) {
                     ForEach(MacCaffeineController.durationChoices, id: \.self) { minutes in
                         Text(minutes < 60 ? "\(minutes) 分钟" : "\(minutes / 60) 小时").tag(minutes)
