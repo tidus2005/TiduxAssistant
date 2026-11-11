@@ -2,6 +2,8 @@
 
 Mac、iPhone、Apple Watch 的个人 AI 协作助手。Mac 执行任务，手机查看状态、传送文件，手表快速提问和记录。
 
+**只需要 Mac 随行功能？** 请使用独立的 [TiduxAssistantMac](https://github.com/tidus2005/TiduxAssistantMac)，仅保留移动办公、咖啡因、热点恢复和运行状态，已去掉文件同步、手机/手表 App；[下载独立 Mac 测试包](https://github.com/tidus2005/TiduxAssistantMac/releases)。本仓库继续公开保留三端源码快照。
+
 这是独立社区项目，与 OpenAI、Apple 无隶属关系。不包含 API Key、账号、付费模型额度或私人服务地址。
 
 [下载安装包](https://github.com/tidus2005/TiduxAssistant/releases) · [安装与配对](docs/INSTALL.md) · [架构](docs/ARCHITECTURE.md) · [隐私和安全](SECURITY.md) · [MIT 许可](LICENSE)
