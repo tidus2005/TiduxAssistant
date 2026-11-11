@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Non-secret storage keys and RFC 6455 public test nonce"
+regexTarget = "secret"
+regexes = ['''^journal\.clip\.v1$''', '''^wrist-arena-v08$''', '''^dGhlIHNhbXBsZSBub25jZQ==$''']

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Codex 随行续跑</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.tidux.CodexWatchPet.pairing</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>codexwatchpet</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CodexWatchPetVoiceInputSourceRevision</key>
+	<string>$(CODEX_WATCH_PET_SOURCE_REVISION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAccessorySetupBluetoothNames</key>
+	<array>
+		<string>Codex 随行</string>
+	</array>
+	<key>NSAccessorySetupBluetoothServices</key>
+	<array>
+		<string>C0DE0001-7A11-4A3B-9A7E-5A7A11C0DE01</string>
+	</array>
+	<key>NSAccessorySetupKitSupports</key>
+	<array>
+		<string>Bluetooth</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>10.0.0.0/8</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>100.64.0.0/10</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>172.16.0.0/12</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>192.168.0.0/16</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Codex Watch Pet 使用蓝牙安全连接你的 Mac，显示运行状态、控制随行续跑，并双向同步你选择的照片和文件。</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_codexsync._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Codex Watch Pet 使用本地网络发现已配对的 Mac，并通过端到端加密连接双向同步照片和文件。</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Codex Watch Pet 仅在你主动开始听写后使用麦克风，将现场内容实时转换为文字。</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Codex Watch Pet 将 Mac 同步来的图片和视频添加到你的照片图库；原文件也会保留在“文件”中。</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Codex Watch Pet 使用 Apple 的设备端语音模型，将你主动录制的声音转换为文字；音频不会发送到 Codex Watch Pet 的服务器。</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>FlowType 语音历史备份</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.tidux.flowtype.voice-history-backup</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>flowtypebackup</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

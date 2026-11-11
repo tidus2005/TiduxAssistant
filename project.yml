@@ -1,0 +1,311 @@
+name: CodexWatchPet
+options:
+  bundleIdPrefix: com.tidux
+  deploymentTarget:
+    iOS: "26.0"
+    watchOS: "11.0"
+    macOS: "26.0"
+packages:
+  CodexWatchPet:
+    path: .
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.4.1"
+    CURRENT_PROJECT_VERSION: "12"
+    CODEX_WATCH_PET_SOURCE_REVISION: unversioned-development
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+targets:
+  CodexWatchPet:
+    type: application
+    platform: iOS
+    sources:
+      - path: AppTargets/iOS
+        excludes:
+          - PrivacyInfo.xcprivacy
+      - path: AppTargets/iOS/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    dependencies:
+      - package: CodexWatchPet
+        product: WristArenaFeature
+      - package: CodexWatchPet
+        product: CodexWatchCore
+      - package: CodexWatchPet
+        product: CodexWatchSharedUI
+      - package: CodexWatchPet
+        product: CodexWatchPhoneFeature
+      - package: CodexWatchPet
+        product: CodexWatchIntents
+      - package: CodexWatchPet
+        product: CodexWatchWidgets
+      - package: CodexWatchPet
+        product: CodexMobilityCore
+      - package: CodexWatchPet
+        product: CodexMobilityPhoneFeature
+      - target: CodexWatchPetKeyboard
+        embed: true
+      - target: CodexWatchPetWatch
+        embed: true
+    settings:
+      base:
+        DEVELOPMENT_TEAM: ""
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidux.CodexWatchPet
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: AppTargets/iOS/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Codex 随行续跑
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.productivity
+        UIApplicationSupportsIndirectInputEvents: true
+        UILaunchScreen: {}
+        NSBluetoothAlwaysUsageDescription: Codex Watch Pet 使用蓝牙安全连接你的 Mac，显示运行状态、控制随行续跑，并双向同步你选择的照片和文件。
+        NSAccessorySetupKitSupports:
+          - Bluetooth
+        NSAccessorySetupBluetoothServices:
+          - C0DE0001-7A11-4A3B-9A7E-5A7A11C0DE01
+        NSAccessorySetupBluetoothNames:
+          - Codex 随行
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+          NSExceptionDomains:
+            "10.0.0.0/8":
+              NSExceptionAllowsInsecureHTTPLoads: true
+            "172.16.0.0/12":
+              NSExceptionAllowsInsecureHTTPLoads: true
+            "192.168.0.0/16":
+              NSExceptionAllowsInsecureHTTPLoads: true
+            "100.64.0.0/10":
+              NSExceptionAllowsInsecureHTTPLoads: true
+        NSLocalNetworkUsageDescription: Codex Watch Pet 使用本地网络发现已配对的 Mac，并通过端到端加密连接双向同步照片和文件。
+        NSMicrophoneUsageDescription: Codex Watch Pet 仅在你主动开始听写后使用麦克风，将现场内容实时转换为文字。
+        NSSpeechRecognitionUsageDescription: Codex Watch Pet 使用 Apple 的设备端语音模型，将你主动录制的声音转换为文字；音频不会发送到 Codex Watch Pet 的服务器。
+        CodexWatchPetVoiceInputSourceRevision: $(CODEX_WATCH_PET_SOURCE_REVISION)
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: com.tidux.flowtype.voice-history-backup
+            UTTypeDescription: FlowType 语音历史备份
+            UTTypeConformsTo:
+              - com.apple.package
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - flowtypebackup
+        NSBonjourServices:
+          - _codexsync._tcp
+        NSPhotoLibraryAddUsageDescription: Codex Watch Pet 将 Mac 同步来的图片和视频添加到你的照片图库；原文件也会保留在“文件”中。
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UIBackgroundModes:
+          - bluetooth-central
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tidux.CodexWatchPet.pairing
+            CFBundleURLSchemes:
+              - codexwatchpet
+  CodexMobilityPhoneVoiceInputiOSTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests/CodexMobilityPhoneVoiceInputiOSTests
+    dependencies:
+      - target: CodexWatchPet
+      - package: CodexWatchPet
+        product: CodexMobilityCore
+      - package: CodexWatchPet
+        product: CodexMobilityPhoneFeature
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidux.CodexWatchPet.voiceinput.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/CodexWatchPet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CodexWatchPet
+        BUNDLE_LOADER: $(TEST_HOST)
+  CodexWatchPetKeyboard:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AppTargets/keyboard
+        excludes:
+          - Info.plist
+          - PrivacyInfo.xcprivacy
+      - path: AppTargets/keyboard/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    settings:
+      base:
+        DEVELOPMENT_TEAM: ""
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidux.CodexWatchPet.keyboard
+        PRODUCT_NAME: CodexWatchPetKeyboard
+        GENERATE_INFOPLIST_FILE: NO
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: AppTargets/keyboard/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Codex 输入法
+        CFBundlePackageType: XPC!
+        NSExtension:
+          NSExtensionAttributes:
+            IsASCIICapable: true
+            PrefersRightToLeft: false
+            PrimaryLanguage: en-US
+            RequestsOpenAccess: false
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+  CodexWatchPetWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: AppTargets/watchOS
+        excludes:
+          - PrivacyInfo.xcprivacy
+      - path: AppTargets/watchOS/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    dependencies:
+      - package: CodexWatchPet
+        product: CodexWatchCore
+      - package: CodexWatchPet
+        product: CodexWatchSharedUI
+      - package: CodexWatchPet
+        product: CodexWatchWatchFeature
+      - package: CodexWatchPet
+        product: CodexWatchIntents
+      - package: CodexWatchPet
+        product: CodexWatchWidgets
+      - target: CodexWatchPetWatchWidget
+        embed: true
+    settings:
+      base:
+        DEVELOPMENT_TEAM: ""
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidux.CodexWatchPet.watchkitapp
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: AppTargets/watchOS/CodexWatchPetWatch.entitlements
+        INFOPLIST_KEY_CFBundleDisplayName: Codex 随行
+        INFOPLIST_KEY_WKApplication: true
+        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.tidux.CodexWatchPet
+    info:
+      path: AppTargets/watchOS/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSLocalNetworkUsageDescription: Codex 随行通过本地网络访问你已配对的 Mac，同步任务、回执与进度。
+        NSMicrophoneUsageDescription: 仅在你主动开启实时记录后录音，分段保存在手表并同步到配对手机进行本地转写。
+        UIBackgroundModes:
+          - audio
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+          NSExceptionDomains:
+            "10.0.0.0/8":
+              NSExceptionAllowsInsecureHTTPLoads: true
+            "172.16.0.0/12":
+              NSExceptionAllowsInsecureHTTPLoads: true
+            "192.168.0.0/16":
+              NSExceptionAllowsInsecureHTTPLoads: true
+            "100.64.0.0/10":
+              NSExceptionAllowsInsecureHTTPLoads: true
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tidux.CodexWatchPet.watch.collaboration
+            CFBundleURLSchemes:
+              - codexwatchpet
+  CodexWatchPetWatchWidget:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: AppTargets/watchWidget
+        excludes:
+          - PrivacyInfo.xcprivacy
+      - path: AppTargets/watchWidget/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    dependencies:
+      - package: CodexWatchPet
+        product: CodexWatchWidgets
+    settings:
+      base:
+        DEVELOPMENT_TEAM: ""
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidux.CodexWatchPet.watchkitapp.widget
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: AppTargets/watchWidget/CodexWatchPetWatchWidget.entitlements
+        INFOPLIST_KEY_CFBundleDisplayName: Codex 随行
+    info:
+      path: AppTargets/watchWidget/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Codex Pet
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+  CodexWatchPetMac:
+    type: application
+    platform: macOS
+    sources:
+      - AppTargets/macOS
+    dependencies:
+      - package: CodexWatchPet
+        product: CodexMobilityCore
+      - package: CodexWatchPet
+        product: CodexMobilityMacFeature
+    settings:
+      base:
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: Apple Development
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidux.CodexWatchPet.mac
+        PRODUCT_NAME: CodexWatchPetMac
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_APP_SANDBOX: NO
+    info:
+      path: AppTargets/macOS/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Tidux助手
+        CFBundleName: Tidux助手
+        CFBundleIconFile: AppIcon
+        LSApplicationCategoryType: public.app-category.productivity
+        NSLocationUsageDescription: Tidux助手需要定位权限来识别并重新连接你配置的 iPhone 热点；不会获取或保存你的地理位置。
+        NSLocationWhenInUseUsageDescription: Tidux助手需要定位权限来识别并重新连接你配置的 iPhone 热点；不会获取或保存你的地理位置。
+        NSBluetoothAlwaysUsageDescription: Tidux助手使用蓝牙与 iPhone 安全配对，同步设备状态以及你选择的照片和文件。
+        NSLocalNetworkUsageDescription: Tidux助手使用本地网络向已配对的 iPhone 提供端到端加密的双向文件同步。
+        NSMicrophoneUsageDescription: Tidux助手仅在你主动开始语音输入后使用麦克风，将语音实时转换为文字。
+        NSSpeechRecognitionUsageDescription: Tidux助手使用 Apple 的设备端语音模型转换你主动录制的声音。
+        NSBonjourServices:
+          - _codexsync._tcp
+        NSPrincipalClass: NSApplication
+schemes:
+  CodexWatchPetWatch:
+    build:
+      targets:
+        CodexWatchPetWatch: all
+    run:
+      config: Debug
+  CodexWatchPet:
+    build:
+      targets:
+        CodexWatchPet: all
+        CodexWatchPetKeyboard: all
+        CodexWatchPetWatch: all
+        CodexWatchPetWatchWidget: all
+        CodexMobilityPhoneVoiceInputiOSTests:
+          - test
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - CodexMobilityPhoneVoiceInputiOSTests
+  CodexWatchPetMac:
+    build:
+      targets:
+        CodexWatchPetMac: all
+    run:
+      config: Debug

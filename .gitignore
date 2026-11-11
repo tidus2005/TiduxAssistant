@@ -1,0 +1,17 @@
+.build/
+.derivedData*/
+.swiftpm/
+dist/
+*.xcarchive/
+CodexWatchPet.xcodeproj/
+.DS_Store
+xcuserdata/
+*.xcuserstate
+.env
+.env.*
+*.p12
+*.p8
+*.mobileprovision
+*.provisionprofile
+*.keychain*
+*.log

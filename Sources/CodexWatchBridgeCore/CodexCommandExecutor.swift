@@ -1,0 +1,159 @@
+import CodexWatchCore
+import Foundation
+
+public struct CodexCommandExecution: Sendable {
+    public var result: CommandResult
+    public var run: BridgeRunRecord?
+
+    public init(result: CommandResult, run: BridgeRunRecord? = nil) {
+        self.result = result
+        self.run = run
+    }
+}
+
+public struct CodexCommandExecutor: Sendable {
+    public var codexCLIPath: String
+    public var logDirectory: URL
+    public var shell: ShellRunning
+    public var launcher: DetachedProcessLaunching
+
+    public init(
+        codexCLIPath: String = CodexCommandExecutor.defaultCLIPath,
+        logDirectory: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".codex-watch-pet/codex-runs"),
+        shell: ShellRunning = ProcessShellRunner(),
+        launcher: DetachedProcessLaunching = ProcessDetachedLauncher()
+    ) {
+        self.codexCLIPath = codexCLIPath
+        self.logDirectory = logDirectory
+        self.shell = shell
+        self.launcher = launcher
+    }
+
+    public static var defaultCLIPath: String {
+        let candidates = [
+            NSHomeDirectory() + "/.codex/packages/standalone/current/codex",
+            "/Applications/Codex.app/Contents/Resources/codex",
+            NSHomeDirectory() + "/.npm-global/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/bin/codex",
+            NSHomeDirectory() + "/.npm-global/bin/codex",
+            "/opt/homebrew/bin/codex", "/usr/local/bin/codex"
+        ]
+        return candidates.first { FileManager.default.isExecutableFile(atPath: $0) } ?? candidates[0]
+    }
+
+    public func execute(_ command: BridgeCommand) throws -> CodexCommandExecution {
+        switch command.type {
+        case .startThread:
+            return try startThread(command)
+        case .continueThread:
+            return try continueThread(command)
+        case .openOnMac:
+            return try openOnMac(command)
+        case .approve, .decline:
+            return CodexCommandExecution(
+                result: CommandResult(
+                    commandId: command.id,
+                    accepted: false,
+                    message: "Approval responses are handled by BridgeRuntime when a live app-server request id is attached."
+                )
+            )
+        case .cancel, .interrupt:
+            return CodexCommandExecution(
+                result: CommandResult(
+                    commandId: command.id,
+                    accepted: false,
+                    message: "Interrupt is reserved for bridge-owned live turns; no live turn is currently attached."
+                )
+            )
+        case .snooze:
+            return CodexCommandExecution(result: CommandResult(commandId: command.id, accepted: true, message: "Snoozed locally."))
+        }
+    }
+
+    private func startThread(_ command: BridgeCommand) throws -> CodexCommandExecution {
+        guard let prompt = command.payload["prompt"], !prompt.isEmpty else {
+            throw BridgeError.invalidRequest("startThread requires payload.prompt")
+        }
+        let cwd = command.payload["cwd"] ?? FileManager.default.currentDirectoryPath
+        let launch = try launcher.launch(
+            codexCLIPath,
+            arguments: ["exec", "--json", "--skip-git-repo-check", "-C", cwd, prompt],
+            logFile: logFile(for: command)
+        )
+        let threadId = command.threadId ?? "command-\(command.id)"
+        return CodexCommandExecution(
+            result: CommandResult(
+                commandId: command.id,
+                accepted: true,
+                message: "Queued Codex task on Mac (pid \(launch.pid)). Log: \(launch.logFile.path)"
+            ),
+            run: BridgeRunRecord(
+                id: command.id,
+                commandId: command.id,
+                threadId: threadId,
+                commandType: command.type,
+                title: prompt.shortTitle(defaultValue: "Codex task"),
+                prompt: prompt,
+                cwd: cwd,
+                pid: launch.pid,
+                logFile: launch.logFile.path
+            )
+        )
+    }
+
+    private func continueThread(_ command: BridgeCommand) throws -> CodexCommandExecution {
+        guard let threadId = command.threadId, !threadId.isEmpty else {
+            throw BridgeError.invalidRequest("continueThread requires threadId")
+        }
+        guard let prompt = command.payload["prompt"], !prompt.isEmpty else {
+            throw BridgeError.invalidRequest("continueThread requires payload.prompt")
+        }
+        let launch = try launcher.launch(
+            codexCLIPath,
+            arguments: ["exec", "resume", "--json", "--all", "--skip-git-repo-check", threadId, prompt],
+            logFile: logFile(for: command)
+        )
+        return CodexCommandExecution(
+            result: CommandResult(
+                commandId: command.id,
+                accepted: true,
+                message: "Queued Codex continuation for \(threadId) on Mac (pid \(launch.pid)). Log: \(launch.logFile.path)"
+            ),
+            run: BridgeRunRecord(
+                id: command.id,
+                commandId: command.id,
+                threadId: threadId,
+                commandType: command.type,
+                title: "Continuing Codex thread",
+                prompt: prompt,
+                cwd: command.payload["cwd"] ?? "",
+                pid: launch.pid,
+                logFile: launch.logFile.path
+            )
+        )
+    }
+
+    private func openOnMac(_ command: BridgeCommand) throws -> CodexCommandExecution {
+        _ = try shell.run(codexCLIPath, arguments: ["app"], input: nil)
+        return CodexCommandExecution(
+            result: CommandResult(
+                commandId: command.id,
+                accepted: true,
+                message: "Opened Codex on Mac. Direct thread focusing depends on Codex desktop URL support."
+            )
+        )
+    }
+
+    private func logFile(for command: BridgeCommand) -> URL {
+        let safeId = command.id.replacingOccurrences(of: "/", with: "-")
+        return logDirectory.appendingPathComponent("\(safeId).jsonl")
+    }
+}
+
+private extension String {
+    func shortTitle(defaultValue: String, maxLength: Int = 72) -> String {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return defaultValue }
+        guard trimmed.count > maxLength else { return trimmed }
+        return String(trimmed.prefix(maxLength - 1)) + "..."
+    }
+}
